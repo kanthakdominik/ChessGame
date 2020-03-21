@@ -1,49 +1,106 @@
 
-#include <Wt/WApplication.h>
-#include <Wt/WBreak.h>
-#include <Wt/WContainerWidget.h>
-#include <Wt/WLineEdit.h>
-#include <Wt/WPushButton.h>
+#include <Wt/WAnchor.h>
 #include <Wt/WText.h>
+#include <Wt/WStackedWidget.h>
+#include <Wt/WVBoxLayout.h>
+#include <Wt/WHBoxLayout.h>
+#include <Wt/WApplication.h>
+#include <Wt/Auth/AuthWidget.h>
+#include <Wt/Auth/RegistrationModel.h>
 
+#include "ChessGame.h"
+#include "ChessWidget.h"
+#include "HighScoresWidget.h"
 
-class HelloApplication : public Wt::WApplication
+ChessGame::ChessGame() : WContainerWidget(), game_(0), scores_(0)
 {
-public:
-    HelloApplication(const Wt::WEnvironment& env);
+	session_.login().changed().connect(this, &ChessGame::onAuthEvent);
 
-};
+	std::unique_ptr<Auth::AuthModel> authModel = cpp14::make_unique<Auth::AuthModel>(Session::auth(), session_.users());
+	authModel->addPasswordAuth(&Session::passwordAuth());
+	authModel->addOAuth(Session::oAuth());
 
-/*
- * The env argument contains information about the new session, and
- * the initial request. It must be passed to the WApplication
- * constructor so it is typically also an argument for your custom
- * application constructor.
-*/
-HelloApplication::HelloApplication(const Wt::WEnvironment& env)
-    : WApplication(env)
-{
-    setTitle("ChessWeb");                      // application title
+	std::unique_ptr<Auth::AuthWidget> authWidget = cpp14::make_unique<Auth::AuthWidget>(session_.login());
+	auto authWidgetPtr = authWidget.get();
+	authWidget->setModel(std::move(authModel));
+	authWidget->setRegistrationEnabled(true);
+
+	std::unique_ptr<WText> title(cpp14::make_unique<WText>("<h1>Chess Game</h1>"));
+	addWidget(std::move(title));
+
+	addWidget(std::move(authWidget));
+
+	mainStack_ = new WStackedWidget();
+	mainStack_->setStyleClass("gamestack");
+	addWidget(std::unique_ptr<WStackedWidget>(mainStack_));
+
+	links_ = new WContainerWidget();
+	links_->setStyleClass("links");
+	links_->hide();
+	addWidget(std::unique_ptr<WContainerWidget>(links_));
+
+	backToGameAnchor_ = links_->addWidget(cpp14::make_unique<WAnchor>("/play", "Game"));
+	backToGameAnchor_->setLink(WLink(LinkType::InternalPath, "/play"));
+
+	scoresAnchor_ = links_->addWidget(cpp14::make_unique<WAnchor>("/highscores", "Highscores"));
+	scoresAnchor_->setLink(WLink(LinkType::InternalPath, "/highscores"));
+
+	WApplication::instance()->internalPathChanged().connect(this, &ChessGame::handleInternalPath);
+
+	authWidgetPtr->processEnvironment();
 }
 
-int main(int argc, char** argv)
+void ChessGame::onAuthEvent()
 {
-    /*
-     * Your main method may set up some shared resources, but should then
-     * start the server application (FastCGI or httpd) that starts listening
-     * for requests, and handles all of the application life cycles.
-     *
-     * The last argument to WRun specifies the function that will instantiate
-     * new application objects. That function is executed when a new user surfs
-     * to the Wt application, and after the library has negotiated browser
-     * support. The function should return a newly instantiated application
-     * object.
-     */
-    return Wt::WRun(argc, argv, [](const Wt::WEnvironment& env) {
-        /*
-         * You could read information from the environment to decide whether
-         * the user has permission to start a new application
-         */
-        return Wt::cpp14::make_unique<HelloApplication>(env);
-        });
+	if (session_.login().loggedIn()) {
+		links_->show();
+		handleInternalPath(WApplication::instance()->internalPath());
+	}
+	else {
+		mainStack_->clear();
+		game_ = 0;
+		scores_ = 0;
+		links_->hide();
+	}
+}
+
+void ChessGame::handleInternalPath(const std::string& internalPath)
+{
+	if (session_.login().loggedIn()) {
+		if (internalPath == "/play") {
+			showGame();
+		}
+		else if (internalPath == "/highscores") {
+			showHighScores();
+		}
+		else {
+			WApplication::instance()->setInternalPath("/play", true);
+		}	
+	}
+}
+
+void ChessGame::showHighScores()
+{
+	if (!scores_) {
+		scores_ = mainStack_->addWidget(cpp14::make_unique<HighScoresWidget>(&session_));
+	}
+		
+	mainStack_->setCurrentWidget(scores_);
+	scores_->update();
+
+	backToGameAnchor_->removeStyleClass("selected-link");
+	scoresAnchor_->addStyleClass("selected-link");
+}
+
+void ChessGame::showGame()
+{
+	if (!game_) {
+		game_ = mainStack_->addWidget(cpp14::make_unique<ChessWidget>(session_.userName()));
+		game_->scoreUpdated().connect(std::bind(&Session::addToScore, &session_, std::placeholders::_1));
+	}
+
+	mainStack_->setCurrentWidget(game_);
+
+	backToGameAnchor_->addStyleClass("selected-link");
+	scoresAnchor_->removeStyleClass("selected-link");
 }
