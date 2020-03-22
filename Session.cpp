@@ -1,4 +1,3 @@
-
 #include "Session.h"
 
 #include "Wt/Auth/AuthService.h"

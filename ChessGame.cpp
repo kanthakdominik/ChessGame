@@ -9,7 +9,7 @@
 #include <Wt/Auth/RegistrationModel.h>
 
 #include "ChessGame.h"
-#include "ChessWidget.h"
+#include "StartWidget.h"
 #include "HighScoresWidget.h"
 
 ChessGame::ChessGame() : WContainerWidget(), game_(0), scores_(0)
@@ -95,8 +95,7 @@ void ChessGame::showHighScores()
 void ChessGame::showGame()
 {
 	if (!game_) {
-		game_ = mainStack_->addWidget(cpp14::make_unique<ChessWidget>(session_.userName()));
-		game_->scoreUpdated().connect(std::bind(&Session::addToScore, &session_, std::placeholders::_1));
+		game_ = mainStack_->addWidget(cpp14::make_unique<StartWidget>(session_.userName()));
 	}
 
 	mainStack_->setCurrentWidget(game_);

@@ -9,9 +9,7 @@
 
 using namespace Wt;
 
-HighScoresWidget::HighScoresWidget(Session* session) :
-    WContainerWidget(),
-    session_(session)
+HighScoresWidget::HighScoresWidget(Session* session) : WContainerWidget(),session_(session)
 {
     setContentAlignment(AlignmentFlag::Center);
     setStyleClass("highscores");
