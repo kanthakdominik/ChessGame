@@ -2,10 +2,17 @@
 #define START_WIDGET_H_
 
 #include <vector>
-
+#include <Wt/WImage.h>
 #include <Wt/WContainerWidget.h>
 
+#include "PanelWidget.h"
+#include "ChessBoardWidget.h"
+
+using namespace Wt;
+
 class Session;
+class PanelWidget;
+class ChessBoardWidget;
 
 class StartWidget : public Wt::WContainerWidget
 {
@@ -13,9 +20,11 @@ public:
 	StartWidget(const std::string& name);
 
 private:
-	Wt::WText* title_;
-	Wt::WText* statusText_;
-	Wt::WPushButton* newGameButton_;
+	WPushButton* newGameButton_;
+	WImage* background_;
+	WHBoxLayout* hbox_;
+	std::unique_ptr<PanelWidget> panelWidget_;
+	std::unique_ptr<ChessBoardWidget> chessBoardWidget_;
 	std::string name_;
 
 	void newGame();

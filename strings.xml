@@ -12,15 +12,13 @@
     </p>
   </message>
 
-  <message id="chess.readyToPlay">
-    <h2>Gotowy na grę?</h2>
-  </message>
+  <message id="chess.blackPlayer"> <h2>Gracz czarny</h2></message>
+  
+  <message id="chess.whitePlayer"> <h2>Gracz biały</h2></message>
 
   <message id="chess.newGame">New game</message>
 
-  <message id="chess.youWin">
-    Wygrałeś!
-  </message>
+ 
 
   <!-- Emails -->
 
