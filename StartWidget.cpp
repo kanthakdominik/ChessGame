@@ -16,7 +16,6 @@ StartWidget::StartWidget(const std::string& name) : WContainerWidget(), name_(na
 	newGameButton_ = addWidget(cpp14::make_unique<WPushButton>(tr("chess.newGame")));
 	newGameButton_->clicked().connect(this, &StartWidget::newGame);
 	addWidget(cpp14::make_unique<WBreak>());
-
 }
 
 void StartWidget::newGame()

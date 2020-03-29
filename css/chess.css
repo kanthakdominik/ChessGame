@@ -6,6 +6,10 @@ h1 {
     text-align: center;
 }
 
+body {
+  background-color: #bcaaa4;
+}
+
 .gamestack {
     margin: 20px 40px;
 }
@@ -75,3 +79,52 @@ h1 {
     top: 0px;
     font-size: 90%;
 }
+
+.main-box {
+    margin-top: 1ex;
+	margin-bottom: 1ex;
+}
+
+.panel-box {
+	width: 30%;  
+}
+
+.chess-box {
+	width: 70%;
+}
+
+.chessButtonGray {
+	background-color: #4d4d4d;
+	width: 64px !important;
+    height: 64px !important;
+	padding: 0px 0px 0px 0px;
+}
+
+.chessButtonWhite {
+	background-color: white;
+	width: 64px !important;
+    height: 64px !important;
+	padding: 0px 0px 0px 0px;
+}
+
+.chessButtonRed {
+	background-color: red;
+	width: 64px !important;
+    height: 64px !important;
+	padding: 0px 0px 0px 0px;
+}
+
+.chessButtonGreen {
+	background-color: green;
+	width: 64px !important;
+    height: 64px !important;
+	padding: 0px 0px 0px 0px;
+}
+
+.centerWidget {
+	margin-left: auto;
+    margin-right: auto;
+}
+
+
+
