@@ -288,8 +288,4 @@ void ChessBoardWidget::validateClick(int x, int y)
 ChessBoardWidget::~ChessBoardWidget()
 {
     resetChessboard();
-    for (int i = 0; i < 8; i++) {
-        delete[] chessSquares[i];
-    }
-    delete[] chessSquares;
 }

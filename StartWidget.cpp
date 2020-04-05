@@ -26,8 +26,8 @@ void StartWidget::newGame()
 	setStyleClass("main-box");
 	hbox_ = setLayout(Wt::cpp14::make_unique<Wt::WHBoxLayout>());
 
-    panelWidget_ = Wt::cpp14::make_unique<PanelWidget>();
 	chessBoardWidget_ = Wt::cpp14::make_unique<ChessBoardWidget>();
+	panelWidget_ = Wt::cpp14::make_unique<PanelWidget>();
 
 	hbox_->addWidget(std::move(panelWidget_));
 	hbox_->addWidget(std::move(chessBoardWidget_));
