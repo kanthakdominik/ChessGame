@@ -2,7 +2,7 @@
 #include <Wt/WApplication.h>
 #include <Wt/WServer.h>
 
-#include "ChessGame.h"
+#include "StartWidget.h"
 #include "Session.h"
 
 using namespace Wt;
@@ -18,7 +18,7 @@ std::unique_ptr<WApplication> createApplication(const WEnvironment& env)
 
     app->useStyleSheet("css/chess.css");
 
-    app->root()->addWidget(cpp14::make_unique<ChessGame>());
+    app->root()->addWidget(cpp14::make_unique<StartWidget>());
 
     return app;
 }

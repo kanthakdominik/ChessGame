@@ -1,33 +1,36 @@
-#ifndef START_WIDGET_H_
-#define START_WIDGET_H_
 
-#include <vector>
-#include <Wt/WImage.h>
+#ifndef CHESSGAME_H_
+#define CHESSGAME_H_
+
 #include <Wt/WContainerWidget.h>
 
-#include "PanelWidget.h"
-#include "ChessBoardWidget.h"
+#include "Session.h"
 
 using namespace Wt;
 
+class Wt::WStackedWidget;
+class Wt::WAnchor;
+class ChessGameWidget;
+class HighScoresWidget;
 class Session;
-class PanelWidget;
-class ChessBoardWidget;
 
-class StartWidget : public Wt::WContainerWidget
+class StartWidget : public WContainerWidget
 {
 public:
-	StartWidget(const std::string& name);
+	StartWidget();
+	void handleInternalPath(const std::string& internalPath);
 
 private:
-	WPushButton* newGameButton_;
-	WImage* background_;
-	WHBoxLayout* hbox_;
-	std::unique_ptr<PanelWidget> panelWidget_;
-	std::unique_ptr<ChessBoardWidget> chessBoardWidget_;
-	std::string name_;
+	WStackedWidget* mainStack_;
+	ChessGameWidget* game_;
+	HighScoresWidget* scores_;
+	WContainerWidget* links_;
+	WAnchor* backToGameAnchor_;
+	WAnchor* scoresAnchor_;
+	Session session_;
 
-	void newGame();
+	void onAuthEvent();
+	void showGame();
+	void showHighScores();
 };
-
-#endif //START_WIDGET_H_
+#endif //CHESSGAME_H_

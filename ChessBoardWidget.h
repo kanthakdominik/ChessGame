@@ -2,6 +2,7 @@
 #define CHESS_BOARD_WIDGET_H_
 
 #include <Wt/WContainerWidget.h>
+#include <Wt/WSignal.h>
 #include "ChessSquare.h"
 #include "ChessPiece.h"
 
@@ -20,10 +21,12 @@ public:
 
 	//slots
 	void validateClick(int x, int y);
+	void handleClick();
 
 private:
 	WContainerWidget* chessBoard;
 	ChessSquare* chessSquares[8][8];
+	WText* text;
 
 	void updateSquares();              
 	void move();                        
