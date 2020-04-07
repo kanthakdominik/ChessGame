@@ -29,6 +29,8 @@ void ChessGameWidget::newGame()
 	chessBoardWidget->generateChessBoard();
 	chessBoardWidget->generateChessPieces();
 
+	panelWidget->setArrow(0);
+
 	setLayout(std::move(hbox));
 }
 

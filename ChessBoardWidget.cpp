@@ -28,7 +28,8 @@ void ChessBoardWidget::generateChessBoard() {
 	text = addWidget(std::make_unique<WText>(""));
 
 	
-			chessSquares[0][0]->clicked().connect(this,&ChessBoardWidget::handleClick);
+	chessSquares[0][0]->clicked().connect(this,&ChessBoardWidget::handleClick);
+
 
 }
 

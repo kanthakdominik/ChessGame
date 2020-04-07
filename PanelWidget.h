@@ -17,14 +17,13 @@ class PanelWidget : public WContainerWidget
 {
 public:
 	PanelWidget();
-	//void clearLost();
-	//~PanelWidget();
-
-	//void updateLost();          //!< Aktualizuje listê ze straconymi pionkami
-	//void updateCurrentPlayer(); //!< Zmienia aktualny numer gracza
+	
+	void setArrow(int player);
+	//void updateLostFigure(int player, Figure figure);
 
 private:
-	ChessBoardWidget* chessBoardWidget;
+	WImage* player1Arrow;
+	WImage* player2Arrow;
 	
 };
 

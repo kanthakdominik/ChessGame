@@ -4,83 +4,51 @@ PanelWidget::PanelWidget() : WContainerWidget()
 {
 	setStyleClass("panel-box");
 
-	//player1 Arrow
-	WContainerWidget* player1Arrow = new WContainerWidget();
-	auto player1ArrowLayout = std::make_unique<WHBoxLayout>();
-	player1ArrowLayout->addWidget(std::make_unique<WImage>(WLink("resources/Images/arrow.png")));
-	player1Arrow->setLayout(std::move(player1ArrowLayout));
-	player1Arrow->setStyleClass("playerArrow");
+	player1Arrow = addWidget(std::make_unique<WImage>(WLink("resources/Images/arrow_blank.png")));
+	player2Arrow = addWidget(std::make_unique<WImage>(WLink("resources/Images/arrow_blank.png")));
 
-	//player2 Arrow
-	WContainerWidget* player2Arrow = new WContainerWidget();
-	auto player2ArrowLayout = std::make_unique<WHBoxLayout>();
-	player2ArrowLayout->addWidget(std::make_unique<WImage>(WLink("resources/Images/arrow.png")));
-	player2Arrow->setLayout(std::move(player2ArrowLayout));
-	player2Arrow->setStyleClass("playerArrow");
-
-	//player1 Image
-	WContainerWidget* player1Image = new WContainerWidget();
-	auto player1ImageLayout = std::make_unique<WHBoxLayout>();
-	player1ImageLayout->addWidget(std::make_unique<WImage>(WLink("resources/Images/player_black.png")));
-	player1Image->setLayout(std::move(player1ImageLayout));
+	WImage* player1Image =addWidget(std::make_unique<WImage>(WLink("resources/Images/player_black.png")));
 	player1Image->setStyleClass("playerImage");
-
-	//player2 Image
-	WContainerWidget* player2Image = new WContainerWidget();
-	auto player2ImageLayout = std::make_unique<WHBoxLayout>();
-	player2ImageLayout->addWidget(std::make_unique<WImage>(WLink("resources/Images/player_white.png")));
-	player2Image->setLayout(std::move(player2ImageLayout));
+	WImage* player2Image = addWidget(std::make_unique<WImage>(WLink("resources/Images/player_white.png")));
 	player2Image->setStyleClass("playerImage");
 
-	//player1 Label
-	WContainerWidget* player1Label = new WContainerWidget();
-	auto player1LabelLayout = std::make_unique<WHBoxLayout>();
-	player1LabelLayout->addWidget(std::make_unique<WText>("Player Black"));
-	player1Label->setLayout(std::move(player1LabelLayout));
+	WText* player1Label = addWidget(std::make_unique<WText>("Player Black"));
 	player1Label->setStyleClass("playerLabel");
-
-	//player2 Label
-	WContainerWidget* player2Label = new WContainerWidget();
-	auto player2LabelLayout = std::make_unique<WHBoxLayout>();
-	player2LabelLayout->addWidget(std::make_unique<WText>("Player White"));
-	player2Label->setLayout(std::move(player2LabelLayout));
+	WText* player2Label = addWidget(std::make_unique<WText>("Player White"));
 	player2Label->setStyleClass("playerLabel");
 
-	//player1 lost pieces
-	WContainerWidget* player1LostPieces = new WContainerWidget();
-	auto player1LostPiecesLayout = std::make_unique<WGridLayout>();
+	////player1 lost pieces
+	std::unique_ptr<WContainerWidget> lostFigureImage1 = std::make_unique<WContainerWidget>();
+	lostFigureImage1->setStyleClass("lostFigureContainer");
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			auto image = std::make_unique<WImage>(ChessPiece(1, Figure::KING).getIconLink());
-			image->setStyleClass("lostFigureImage");
-			player1LostPiecesLayout->addWidget(std::move(image), i, j);
+			auto figure = lostFigureImage1->addWidget(std::make_unique<WImage>(ChessPiece(1, Figure::KING).getIconLink()));
+			figure->setStyleClass("lostFigureImage");
 		}
 	}
-	player1LostPieces->setLayout(std::move(player1LostPiecesLayout));
+	addWidget(std::move(lostFigureImage1));
 
-	//player2 lost pieces
-	WContainerWidget* player2LostPieces = new WContainerWidget();
-	auto player2LostPiecesLayout = std::make_unique<WGridLayout>();
+	////player2 lost pieces
+	std::unique_ptr<WContainerWidget> lostFigureImage2 = std::make_unique<WContainerWidget>();
+	lostFigureImage2->setStyleClass("lostFigureContainer");
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			auto image = std::make_unique<WImage>(ChessPiece(2, Figure::KING).getIconLink());
-			image->setStyleClass("lostFigureImage");
-			player2LostPiecesLayout->addWidget(std::move(image), i, j);
+			auto figure = lostFigureImage2->addWidget(std::make_unique<WImage>(ChessPiece(0, Figure::QUEEN).getIconLink()));
+			figure->setStyleClass("lostFigureImage");
 		}
 	}
-	player2LostPieces->setLayout(std::move(player2LostPiecesLayout));
-
-	//panel
-	WContainerWidget* panel = addWidget(std::make_unique<WContainerWidget>());
-	auto panelLayout = std::make_unique<WGridLayout>();
-	panelLayout->addWidget(std::unique_ptr<WContainerWidget>(player1Arrow), 0, 0);
-	panelLayout->addWidget(std::unique_ptr<WContainerWidget>(player1Image), 1, 0);
-	panelLayout->addWidget(std::unique_ptr<WContainerWidget>(player1Label), 2, 0);
-	panelLayout->addWidget(std::unique_ptr<WContainerWidget>(player1LostPieces), 3, 0);
-	panelLayout->addWidget(std::unique_ptr<WContainerWidget>(player2Arrow), 0, 1);
-	panelLayout->addWidget(std::unique_ptr<WContainerWidget>(player2Image), 1, 1);
-	panelLayout->addWidget(std::unique_ptr<WContainerWidget>(player2Label), 2, 1);
-	panelLayout->addWidget(std::unique_ptr<WContainerWidget>(player2LostPieces), 3, 1);
-	panel->setLayout(std::move(panelLayout));
-
+	addWidget(std::move(lostFigureImage2));
 }
+
+void PanelWidget::setArrow(int player) {
+	player1Arrow->setImageLink("resources/Images/arrow_blank.png");
+	player2Arrow->setImageLink("resources/Images/arrow_blank.png");
+
+	if (player == 1) {
+		player1Arrow->setImageLink("resources/Images/arrow.png");
+	}
+	else {
+		player2Arrow->setImageLink("resources/Images/arrow.png");
+	}
+}
+	
