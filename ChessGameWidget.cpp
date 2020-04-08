@@ -18,19 +18,20 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 	newGameButton = addWidget(cpp14::make_unique<WPushButton>(tr("chess.newGame")));
 	newGameButton->clicked().connect(this, &ChessGameWidget::newGame);
 
-	panelWidget = hbox->addWidget(cpp14::make_unique<PanelWidget>());
+	panelWidget = hbox->addWidget(cpp14::make_unique<PanelWidget>(chessBoardWidget));
 	chessBoardWidget = hbox->addWidget(cpp14::make_unique<ChessBoardWidget>());
 }
 
 void ChessGameWidget::newGame()
 {
 	newGameButton->hide();
+	setLayout(std::move(hbox));
 
 	chessBoardWidget->generateChessBoard();
 	chessBoardWidget->generateChessPieces();
+	
+	//panelWidget->addLostFigure(1, chp->getIconLink());
 
-	panelWidget->setArrow(0);
-
-	setLayout(std::move(hbox));
 }
+
 

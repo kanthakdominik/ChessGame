@@ -19,9 +19,13 @@ public:
 	void blockAllSquares();
 	~ChessBoardWidget();
 
+	//signals
+	void checkMate(int player);         
+	void nextMove();                   
+	void newLost();                  
+
 	//slots
 	void validateClick(int x, int y);
-	void handleClick();
 
 private:
 	WContainerWidget* chessBoard;

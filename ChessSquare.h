@@ -4,6 +4,7 @@
 #include <Wt/WLogger.h>
 #include <Wt/WPushButton.h>
 #include <Wt/WString.h>
+
 #include "ChessPiece.h"
 
 enum class Color
@@ -26,10 +27,17 @@ public:
 	void setPiece(ChessPiece* chessPiece);   
 	void removePiece();              
 	void setColor(Color color);           
-	WString toChessNotation();          
+	WString toChessNotation();    
+	void process();
 	~ChessSquare();  
 
+	//signal
+	Signal<int, int>& clickedChessSquare();
+
+
 private:
+	Wt::Signal<int,int> clickedChessSquare_;
+
 	bool active;
 	Color color;
 	int column;

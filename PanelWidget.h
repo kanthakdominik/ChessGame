@@ -10,21 +10,33 @@
 #include <Wt/WString.h>
 
 #include "ChessBoardWidget.h"
+#include "ChessPiece.h"
 
 using namespace Wt;
 
 class PanelWidget : public WContainerWidget
 {
 public:
-	PanelWidget();
-	
-	void setArrow(int player);
-	//void updateLostFigure(int player, Figure figure);
+	PanelWidget(ChessBoardWidget* chessBoard);
+
+	void cleartLostFigures();
+	WLink getBlancIconLink();
+
+	//slots         
+	void updateArrow();
+	void addLostFigure(WLink lostFigure);
 
 private:
+	ChessBoardWidget* chessBoard;
+	int player1LostPiecesCounter;
+	int player2LostPiecesCounter;
 	WImage* player1Arrow;
 	WImage* player2Arrow;
-	
+	WImage* player1LostFigures[16];
+	WImage* player2LostFigures[16];
+	std::unique_ptr<WContainerWidget> player1LostFiguresImage;
+	std::unique_ptr<WContainerWidget> player2LostFiguresImage;
+
 };
 
 #endif //PANEL_WIDGET_H_

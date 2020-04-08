@@ -7,6 +7,8 @@ ChessSquare::ChessSquare(int row, int column) : WPushButton()
 	chessPiece = nullptr;
 	active = false;
 
+	clicked().connect(this, &ChessSquare::process);
+
 	if (column % 2 == 0) {
 		if (row % 2 == 0)
 			this->setColor(Color::GRAY);
@@ -19,6 +21,10 @@ ChessSquare::ChessSquare(int row, int column) : WPushButton()
 		else
 			this->setColor(Color::GRAY);
 	}
+}
+
+void ChessSquare::process() {
+	clickedChessSquare_.emit(row, column); 
 }
 
 void ChessSquare::setActive(Color color)
@@ -97,6 +103,11 @@ void ChessSquare::setColor(Color color)
 		break;
 	default: break;
 	}
+}
+
+Signal<int, int>& ChessSquare::clickedChessSquare()
+{
+	return clickedChessSquare_;
 }
 
 ChessSquare::~ChessSquare()

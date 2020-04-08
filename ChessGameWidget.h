@@ -19,7 +19,9 @@ class ChessGameWidget : public WContainerWidget
 public:
 	ChessGameWidget(const std::string& name);
     void newGame();
-    void game_over(int player); 
+  //  void game_over(int player); 
+
+	
      
 
 private:
@@ -29,7 +31,8 @@ private:
 	PanelWidget* panelWidget;
     ChessBoardWidget* chessBoardWidget;
 
-	
+	ChessPiece* chp;
+	ChessPiece* chp1;
 };
 
 #endif //START_WIDGET_H_
