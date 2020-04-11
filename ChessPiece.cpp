@@ -1,14 +1,12 @@
 #include "ChessPiece.h"
 
-ChessPiece::ChessPiece(int playerNumber, Figure figure)
-{
+ChessPiece::ChessPiece(int playerNumber, Figure figure){
 	this->figure = figure;
 	this->playerNumber = playerNumber;
 	moveNumber = 0;
 }
 
-WLink ChessPiece::getIconLink()
-{
+WLink ChessPiece::getIconLink(){
 	WString player_name;
 	if (playerNumber == 1)
 		player_name = "black";
@@ -40,27 +38,22 @@ WLink ChessPiece::getIconLink()
 	return iconLink;
 }
 
-Figure ChessPiece::getFigure()
-{
+Figure ChessPiece::getFigure(){
 	return figure;
 }
 
-int ChessPiece::getPlayer()
-{
+int ChessPiece::getPlayer(){
 	return playerNumber;
 }
 
-int ChessPiece::getMoveNumber()
-{
+int ChessPiece::getMoveNumber(){
 	return moveNumber;
 }
 
-void ChessPiece::nextMove()
-{
+void ChessPiece::nextMove(){
 	moveNumber++;
 }
 
-ChessPiece::~ChessPiece()
-{
-	//log("info") << "Chess piece " << name << " deleted.";
+ChessPiece::~ChessPiece(){
+	//log("info") << "ChessPiece deleted";
 }

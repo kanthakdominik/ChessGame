@@ -8,24 +8,23 @@
 ChessBoardWidget::ChessBoardWidget() : WContainerWidget()
 {
 	setStyleClass("chess-box");
-	currentPlayer = 0;
+	currentPlayer = 1;
 }
 
-void ChessBoardWidget::generateChessBoard() {
-
+void ChessBoardWidget::generateChessBoard() 
+{
 	chessBoard = this->addWidget(std::make_unique<Wt::WContainerWidget>());
 	chessBoard->setStyleClass("centerWidget");
 	chessBoard->setHeight(512);
 	chessBoard->setWidth(512);
-	auto grid = chessBoard->setLayout(Wt::cpp14::make_unique<Wt::WGridLayout>());
+	auto grid = chessBoard->setLayout(cpp14::make_unique<Wt::WGridLayout>());
 
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			chessSquares[i][j] = grid->addWidget(cpp14::make_unique<ChessSquare>(i, j), i, j);
-			chessSquares[i][j]->clickedChessSquare().connect(this, &ChessBoardWidget::validateClick);
+			chessSquares[i][j]->clickedChessSquareSignal.connect(this, &ChessBoardWidget::validateClick);
 		}
 	}
-	
 }
 
 void ChessBoardWidget::move()
@@ -38,12 +37,12 @@ void ChessBoardWidget::move()
 	if (chessSquares[dx][dy]->isPiece() == true) {
 		if (chessSquares[dx][dy]->getPiece()->getFigure() == Figure::KING) {
 			//Szach mat
-			//checkMate(currentPlayer);
+			checkMateSignal.emit(currentPlayer);
 			return;
 		}
-		lost.push_back(chessSquares[dx][dy]->getPiece());
+		lostPiecesList.push_back(chessSquares[dx][dy]->getPiece());
 		chessSquares[dx][dy]->removePiece();
-		// emit newLost();
+		newLostSignal.emit(chessSquares[dx][dy]->getPiece()->getIconLink());
 	}
 	chessSquares[dx][dy]->setPiece(sourcePiece);
 
@@ -51,8 +50,9 @@ void ChessBoardWidget::move()
 	if (currentPlayer == 0) currentPlayer = 1;
 	else currentPlayer = 0;
 
-	//sourcePiece->nextMove();
-	//nextMove();
+	sourcePiece->nextMove();
+
+	nextMoveSignal.emit();
 	updateSquares();
 }
 
@@ -75,14 +75,13 @@ bool ChessBoardWidget::checkActive(int x, int y)
 	}
 }
 
-void ChessBoardWidget::setCurrentPlayer(int player)
-{
+void ChessBoardWidget::setCurrentPlayer(int player){
 	currentPlayer = player;
 }
 
 void ChessBoardWidget::resetChessboard()
 {
-	setCurrentPlayer(0);
+	setCurrentPlayer(1);
 
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -91,7 +90,7 @@ void ChessBoardWidget::resetChessboard()
 			}
 		}
 	}
-	lost.clear();
+	lostPiecesList.clear();
 }
 
 void ChessBoardWidget::updateSquares()
@@ -106,6 +105,7 @@ void ChessBoardWidget::updateSquares()
 			}
 		}
 	}
+	setDefaultColors();
 }
 
 void ChessBoardWidget::blockAllSquares()
@@ -117,14 +117,13 @@ void ChessBoardWidget::blockAllSquares()
 	}
 }
 
-void ChessBoardWidget::generateChessPieces() {
-
+void ChessBoardWidget::generateChessPieces() 
+{
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			chessSquares[i][j]->removePiece();
 		}
 	}
-
 	rook1_black = new ChessPiece(1, Figure::ROOK);
 	rook2_black = new ChessPiece(1, Figure::ROOK);
 	knight1_black = new ChessPiece(1, Figure::KNIGHT);
@@ -136,7 +135,6 @@ void ChessBoardWidget::generateChessPieces() {
 	for (int i = 0; i < 8; i++) {
 		pawns_black[i] = new ChessPiece(1, Figure::PAWN);
 	}
-
 	rook1_white = new ChessPiece(0, Figure::ROOK);
 	rook2_white = new ChessPiece(0, Figure::ROOK);
 	knight1_white = new ChessPiece(0, Figure::KNIGHT);
@@ -148,7 +146,6 @@ void ChessBoardWidget::generateChessPieces() {
 	for (int i = 0; i < 8; i++) {
 		pawns_white[i] = new ChessPiece(0, Figure::PAWN);
 	}
-
 	//black pieces
 	chessSquares[7][0]->setPiece(rook1_black);
 	chessSquares[7][1]->setPiece(knight1_black);
@@ -161,7 +158,6 @@ void ChessBoardWidget::generateChessPieces() {
 	for (int i = 0; i < 8; i++) {
 		chessSquares[6][i]->setPiece(pawns_black[i]);
 	}
-
 	//white pieces
 	chessSquares[0][0]->setPiece(rook1_white);
 	chessSquares[0][1]->setPiece(knight1_white);
@@ -174,118 +170,140 @@ void ChessBoardWidget::generateChessPieces() {
 	for (int i = 0; i < 8; i++) {
 		chessSquares[1][i]->setPiece(pawns_white[i]);
 	}
+	updateSquares();
 }
 
 void ChessBoardWidget::validateClick(int x, int y)
 {
-	
-	log("info") << "Clicked square: <" << x << "," << y << ">";
+	//log("info") << "Clicked square: <" << x << "," << y << ">";
+	ChessSquare* square = chessSquares[x][y];
+	if (square->isPiece() == true && square->getPiece()->getPlayer() == currentPlayer) {
+		updateSquares();
+		square->setActive(Color::GREEN);
+		sx = x;
+		sy = y;
+		int i;
+		switch (square->getPiece()->getFigure()) {
+		case Figure::KING:
+			checkActive(x + 1, y - 1);
+			checkActive(x + 1, y);
+			checkActive(x + 1, y + 1);
+			checkActive(x, y + 1);
+			checkActive(x, y - 1);
+			checkActive(x - 1, y + 1);
+			checkActive(x - 1, y);
+			checkActive(x - 1, y + 1);
+			break;
+		case Figure::BISHOP:
+			i = 1;
+			while (checkActive(x + i, y + i)) i++;
+			i = 1;
+			while (checkActive(x + i, y - i)) i++;
+			i = 1;
+			while (checkActive(x - i, y + i)) i++;
+			i = 1;
+			while (checkActive(x - i, y - i)) i++;
+			break;
+		case Figure::KNIGHT:
+			checkActive(x + 2, y + 1);
+			checkActive(x + 2, y - 1);
+			checkActive(x - 2, y + 1);
+			checkActive(x - 2, y - 1);
+			checkActive(x + 1, y + 2);
+			checkActive(x + 1, y - 2);
+			checkActive(x - 1, y + 2);
+			checkActive(x - 1, y - 2);
+			break;
+		case Figure::QUEEN:
+			i = 1;
+			while (checkActive(x + i, y)) i++;
+			i = 1;
+			while (checkActive(x + i, y + i)) i++;
+			i = 1;
+			while (checkActive(x + i, y - i)) i++;
+			i = 1;
+			while (checkActive(x, y + i)) i++;
+			i = 1;
+			while (checkActive(x, y - i)) i++;
+			i = 1;
+			while (checkActive(x - i, y)) i++;
+			i = 1;
+			while (checkActive(x - i, y + i)) i++;
+			i = 1;
+			while (checkActive(x - i, y - i)) i++;
+			break;
+		case Figure::ROOK:
+			i = 1;
+			while (checkActive(x + i, y) == true) i++;
+			i = 1;
+			while (checkActive(x - i, y) == true) i++;
+			i = 1;
+			while (checkActive(x, y - i) == true) i++;
+			i = 1;
+			while (checkActive(x, y + i) == true) i++;
+			break;
+		case Figure::PAWN:
+			//Funkcja checkActive() nie mo¿e zostaæ u¿yta, poniewa¿ pionek posiada inne regu³y dla przemieszczania i inne dla atakowania.
+			if (currentPlayer == 0) {
+				if (x + 1 < 8) {
+					if (chessSquares[x + 1][y]->isPiece() == false) chessSquares[x + 1][y]->setActive(Color::GREEN);
+					if (y + 1 < 8 && chessSquares[x + 1][y + 1]->isPiece() == true && chessSquares[x + 1][y + 1]->getPiece()->getPlayer() != currentPlayer) {
+						chessSquares[x + 1][y + 1]->setActive(Color::RED);
+					}
+					if (y - 1 >= 0 && chessSquares[x + 1][y - 1]->isPiece() == true && chessSquares[x + 1][y - 1]->getPiece()->getPlayer() != currentPlayer) {
+						chessSquares[x + 1][y - 1]->setActive(Color::RED);
+					}
+				}
+				if (chessSquares[x][y]->getPiece()->getMoveNumber() == 0) {
+					if (chessSquares[x + 2][y]->isPiece() == false) chessSquares[x + 2][y]->setActive(Color::GREEN);
+				}
+			}
+			else {
+				if (x - 1 >= 0) {
+					if (chessSquares[x - 1][y]->isPiece() == false) chessSquares[x - 1][y]->setActive(Color::GREEN);
+					if (y + 1 < 8 && chessSquares[x - 1][y + 1]->isPiece() == true && chessSquares[x - 1][y + 1]->getPiece()->getPlayer() != currentPlayer) {
+						chessSquares[x - 1][y + 1]->setActive(Color::RED);
+					}
+					if (y - 1 >= 0 && chessSquares[x - 1][y - 1]->isPiece() == true && chessSquares[x - 1][y - 1]->getPiece()->getPlayer() != currentPlayer) {
+						chessSquares[x - 1][y - 1]->setActive(Color::RED);
+					}
+				}
+				if (chessSquares[x][y]->getPiece()->getMoveNumber() == 0) {
+					if (chessSquares[x - 2][y]->isPiece() == false) chessSquares[x - 2][y]->setActive(Color::GREEN);
+				}
+			}
+			break;
+		}
+	}
+	else {
+		dx = x;
+		dy = y;
+		move();
+	}
+}
 
-	//ChessSquare* square = chessSquares[x][y];
-	//if (square->isPiece() == true && square->getPiece()->getPlayer() == currentPlayer) {
-	//	updateSquares();
-	//	square->setActive(Color::GREEN);
-	//	sx = x;
-	//	sy = y;
-	//	//Walidacja ruchów
-	//	int i;
-	//	switch (square->getPiece()->getFigure()) {
-	//	case Figure::KING:
-	//		checkActive(x + 1, y - 1);
-	//		checkActive(x + 1, y);
-	//		checkActive(x + 1, y + 1);
-	//		checkActive(x, y + 1);
-	//		checkActive(x, y - 1);
-	//		checkActive(x - 1, y + 1);
-	//		checkActive(x - 1, y);
-	//		checkActive(x - 1, y + 1);
-	//		break;
-	//	case Figure::BISHOP:
-	//		i = 1;
-	//		while (checkActive(x + i, y + i)) i++;
-	//		i = 1;
-	//		while (checkActive(x + i, y - i)) i++;
-	//		i = 1;
-	//		while (checkActive(x - i, y + i)) i++;
-	//		i = 1;
-	//		while (checkActive(x - i, y - i)) i++;
-	//		break;
-	//	case Figure::KNIGHT:
-	//		checkActive(x + 2, y + 1);
-	//		checkActive(x + 2, y - 1);
-	//		checkActive(x - 2, y + 1);
-	//		checkActive(x - 2, y - 1);
-	//		checkActive(x + 1, y + 2);
-	//		checkActive(x + 1, y - 2);
-	//		checkActive(x - 1, y + 2);
-	//		checkActive(x - 1, y - 2);
-	//		break;
-	//	case Figure::QUEEN:
-	//		i = 1;
-	//		while (checkActive(x + i, y)) i++;
-	//		i = 1;
-	//		while (checkActive(x + i, y + i)) i++;
-	//		i = 1;
-	//		while (checkActive(x + i, y - i)) i++;
-	//		i = 1;
-	//		while (checkActive(x, y + i)) i++;
-	//		i = 1;
-	//		while (checkActive(x, y - i)) i++;
-	//		i = 1;
-	//		while (checkActive(x - i, y)) i++;
-	//		i = 1;
-	//		while (checkActive(x - i, y + i)) i++;
-	//		i = 1;
-	//		while (checkActive(x - i, y - i)) i++;
-	//		break;
-	//	case Figure::ROOK:
-	//		i = 1;
-	//		while (checkActive(x + i, y) == true) i++;
-	//		i = 1;
-	//		while (checkActive(x - i, y) == true) i++;
-	//		i = 1;
-	//		while (checkActive(x, y - i) == true) i++;
-	//		i = 1;
-	//		while (checkActive(x, y + i) == true) i++;
-	//		break;
-	//	case Figure::PAWN:
-	//		if (currentPlayer == 0) {
-	//			if (x + 1 < 8) {
-	//				if (chessSquares[x + 1][y]->isPiece() == false) chessSquares[x + 1][y]->setActive(Color::GREEN);
-	//				if (y + 1 < 8 && chessSquares[x + 1][y + 1]->isPiece() == true && chessSquares[x + 1][y + 1]->getPiece()->getPlayer() != currentPlayer) {
-	//					chessSquares[x + 1][y + 1]->setActive(Color::RED);
-	//				}
-	//				if (y - 1 >= 0 && chessSquares[x + 1][y - 1]->isPiece() == true && chessSquares[x + 1][y - 1]->getPiece()->getPlayer() != currentPlayer) {
-	//					chessSquares[x + 1][y - 1]->setActive(Color::RED);
-	//				}
-	//			}
-	//			if (chessSquares[x][y]->getPiece()->getMoveNumber() == 0) {
-	//				if (chessSquares[x + 2][y]->isPiece() == false) chessSquares[x + 2][y]->setActive(Color::GREEN);
-	//			}
-	//		}
-	//		else {
-	//			if (x - 1 >= 0) {
-	//				if (chessSquares[x - 1][y]->isPiece() == false) chessSquares[x - 1][y]->setActive(Color::GREEN);
-	//				if (y + 1 < 8 && chessSquares[x - 1][y + 1]->isPiece() == true && chessSquares[x - 1][y + 1]->getPiece()->getPlayer() != currentPlayer) {
-	//					chessSquares[x - 1][y + 1]->setActive(Color::RED);
-	//				}
-	//				if (y - 1 >= 0 && chessSquares[x - 1][y - 1]->isPiece() == true && chessSquares[x - 1][y - 1]->getPiece()->getPlayer() != currentPlayer) {
-	//					chessSquares[x - 1][y - 1]->setActive(Color::RED);
-	//				}
-	//			}
-	//			if (chessSquares[x][y]->getPiece()->getMoveNumber() == 0) {
-	//				if (chessSquares[x - 2][y]->isPiece() == false) chessSquares[x - 2][y]->setActive(Color::GREEN);
-	//			}
-	//		}
-	//		break;
-	//	default: break;
-	//	}
-	//}
-	//else {
-	//	dx = x;
-	//	dy = y;
-	//	move();
-	//}
+void ChessBoardWidget::setDefaultColors()
+{
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (i % 2 == 0) {
+				if (j % 2 == 0) {
+					chessSquares[i][j]->setBackgroundColor(Color::GRAY);
+				}
+				else {
+					chessSquares[i][j]->setBackgroundColor(Color::WHITE);
+				}
+			}
+			else {
+				if (j % 2 == 0) {
+					chessSquares[i][j]->setBackgroundColor(Color::WHITE);
+				}
+				else {
+					chessSquares[i][j]->setBackgroundColor(Color::GRAY);
+				}
+			}
+		}
+	}
 }
 
 ChessBoardWidget::~ChessBoardWidget()

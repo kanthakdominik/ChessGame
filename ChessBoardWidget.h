@@ -17,15 +17,16 @@ public:
 	void generateChessPieces();
 	void resetChessboard();             
 	void blockAllSquares();
+	void setDefaultColors();
 	~ChessBoardWidget();
-
-	//signals
-	void checkMate(int player);         
-	void nextMove();                   
-	void newLost();                  
 
 	//slots
 	void validateClick(int x, int y);
+
+	//signals
+	Signal<> nextMoveSignal;
+	Signal<int> checkMateSignal;   
+	Signal<WLink> newLostSignal;
 
 private:
 	WContainerWidget* chessBoard;
@@ -36,12 +37,13 @@ private:
 	void move();                        
 	void setCurrentPlayer(int player);  
 	bool checkActive(int x, int y); 
+
 	int currentPlayer;
 	int sx;
 	int sy;
 	int dx;
 	int dy;
-	std::list<ChessPiece*> lost;        
+	std::list<ChessPiece*> lostPiecesList;        
 
 	//Black pieces 
 	ChessPiece* pawns_black[8];

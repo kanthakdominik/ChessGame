@@ -25,23 +25,21 @@ public:
 	bool isActive();                    
 	ChessPiece* getPiece();             
 	void setPiece(ChessPiece* chessPiece);   
-	void removePiece();              
-	void setColor(Color color);           
-	WString toChessNotation();    
-	void process();
+	void removePiece();             
+	void setBackgroundColor(Color color);        
+	void clickEvent();
 	~ChessSquare();  
 
 	//signal
-	Signal<int, int>& clickedChessSquare();
-
+	Signal<int, int> clickedChessSquareSignal;
 
 private:
-	Wt::Signal<int,int> clickedChessSquare_;
-
+	void setColor(int color);
 	bool active;
-	Color color;
+	int color;
 	int column;
 	int row;
+	Color backgroundColor;
 	ChessPiece* chessPiece;
 };
 #endif // CHESSSQUARE_H

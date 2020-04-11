@@ -3,6 +3,7 @@
 #include <Wt/WBreak.h>
 #include <Wt/WPushButton.h>
 #include <Wt/WHBoxLayout.h>
+#include <Wt/WMessageBox.h>
 #include <Wt/WLogger.h>
 
 #include "Session.h"
@@ -11,7 +12,7 @@ using namespace Wt;
 
 ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), name_(name)
 {
-	//setStyleClass("main-box");
+	setStyleClass("main-box");
 	setContentAlignment(AlignmentFlag::Center);
 	hbox = std::make_unique<WHBoxLayout>();
 
@@ -20,6 +21,11 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 
 	panelWidget = hbox->addWidget(cpp14::make_unique<PanelWidget>(chessBoardWidget));
 	chessBoardWidget = hbox->addWidget(cpp14::make_unique<ChessBoardWidget>());
+
+	//connections
+	chessBoardWidget->checkMateSignal.connect(this, &ChessGameWidget::gameOver);
+	//chessBoardWidget->nextMoveSignal.connect(this, &PanelWidget::updateArrow);
+	//chessBoardWidget->newLostSignal.connect(this, &PanelWidget::addLostFigure);
 }
 
 void ChessGameWidget::newGame()
@@ -29,9 +35,17 @@ void ChessGameWidget::newGame()
 
 	chessBoardWidget->generateChessBoard();
 	chessBoardWidget->generateChessPieces();
-	
-	//panelWidget->addLostFigure(1, chp->getIconLink());
+}
 
+void ChessGameWidget::gameOver(int player)
+{
+	if (player == 1) {
+		StandardButton result = WMessageBox::show("Koniec gry", "Wygra³ gracz czarny", StandardButton::Ok);
+	}
+	else {
+		StandardButton result = WMessageBox::show("Koniec gry", "Wygra³ gracz bia³y", StandardButton::Ok);
+	}
+	chessBoardWidget->blockAllSquares();
 }
 
 

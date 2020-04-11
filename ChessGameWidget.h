@@ -19,20 +19,17 @@ class ChessGameWidget : public WContainerWidget
 public:
 	ChessGameWidget(const std::string& name);
     void newGame();
-  //  void game_over(int player); 
 
-	
-     
+	//slot
+	void gameOver(int player);
 
 private:
+
 	WString name_;
 	std::unique_ptr<WHBoxLayout> hbox;
 	WPushButton* newGameButton;
 	PanelWidget* panelWidget;
     ChessBoardWidget* chessBoardWidget;
-
-	ChessPiece* chp;
-	ChessPiece* chp1;
 };
 
 #endif //START_WIDGET_H_
