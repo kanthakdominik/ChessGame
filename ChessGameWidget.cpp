@@ -19,18 +19,18 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 	newGameButton = addWidget(cpp14::make_unique<WPushButton>(tr("chess.newGame")));
 	newGameButton->clicked().connect(this, &ChessGameWidget::newGame);
 
-	panelWidget = hbox->addWidget(cpp14::make_unique<PanelWidget>(chessBoardWidget));
 	chessBoardWidget = hbox->addWidget(cpp14::make_unique<ChessBoardWidget>());
-
+	panelWidget = hbox->addWidget(cpp14::make_unique<PanelWidget>(chessBoardWidget));
+	
 	//connections
 	chessBoardWidget->checkMateSignal.connect(this, &ChessGameWidget::gameOver);
-	//chessBoardWidget->nextMoveSignal.connect(this, &PanelWidget::updateArrow);
-	//chessBoardWidget->newLostSignal.connect(this, &PanelWidget::addLostFigure);
+	chessBoardWidget->nextMoveSignal.connect(panelWidget, &PanelWidget::updateArrow);
+	chessBoardWidget->newLostSignal.connect(panelWidget, &PanelWidget::addLostFigure);
 }
 
 void ChessGameWidget::newGame()
 {
-	newGameButton->hide();
+	removeWidget(newGameButton);
 	setLayout(std::move(hbox));
 
 	chessBoardWidget->generateChessBoard();
@@ -40,12 +40,15 @@ void ChessGameWidget::newGame()
 void ChessGameWidget::gameOver(int player)
 {
 	if (player == 1) {
-		StandardButton result = WMessageBox::show("Koniec gry", "Wygra³ gracz czarny", StandardButton::Ok);
+		StandardButton result = WMessageBox::show("End of the game", "Black Player wins", StandardButton::Ok);
 	}
 	else {
-		StandardButton result = WMessageBox::show("Koniec gry", "Wygra³ gracz bia³y", StandardButton::Ok);
+		StandardButton result = WMessageBox::show("End of the game", "White Player wins", StandardButton::Ok);
 	}
 	chessBoardWidget->blockAllSquares();
+	removeWidget(chessBoardWidget);
+	removeWidget(panelWidget);
+	removeWidget(this);
 }
 
 

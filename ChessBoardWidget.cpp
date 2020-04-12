@@ -41,8 +41,8 @@ void ChessBoardWidget::move()
 			return;
 		}
 		lostPiecesList.push_back(chessSquares[dx][dy]->getPiece());
-		chessSquares[dx][dy]->removePiece();
 		newLostSignal.emit(chessSquares[dx][dy]->getPiece()->getIconLink());
+		chessSquares[dx][dy]->removePiece();
 	}
 	chessSquares[dx][dy]->setPiece(sourcePiece);
 

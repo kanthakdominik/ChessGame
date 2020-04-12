@@ -8,7 +8,7 @@ PanelWidget::PanelWidget(ChessBoardWidget* chessBoard) : WContainerWidget()
 	setStyleClass("panel-box");
 
 	//players Arrows
-	player1Arrow = addWidget(std::make_unique<WImage>(WLink("resources/Images/arrow_blank.png")));
+	player1Arrow = addWidget(std::make_unique<WImage>(WLink("resources/Images/arrow.png")));
 	player2Arrow = addWidget(std::make_unique<WImage>(WLink("resources/Images/arrow_blank.png")));
 
 	//players Images

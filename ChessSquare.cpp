@@ -30,10 +30,6 @@ ChessSquare::ChessSquare(int row, int column) : WPushButton(){
 	}
 }
 
-//Signal<int, int>& ChessSquare::clickedChessSquare() {
-//	return clickedChessSquareSignal;
-//}
-
 void ChessSquare::clickEvent() {
 	if (active == true) {
 		clickedChessSquareSignal.emit(row, column);
