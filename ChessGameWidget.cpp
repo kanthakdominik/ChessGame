@@ -1,5 +1,7 @@
 #include "ChessGameWidget.h"
 
+#include <iostream>
+#include <fstream>
 #include <Wt/WBreak.h>
 #include <Wt/WPushButton.h>
 #include <Wt/WHBoxLayout.h>
@@ -9,6 +11,7 @@
 #include "Session.h"
 
 using namespace Wt;
+using namespace std;
 
 ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), name_(name)
 {
@@ -21,10 +24,16 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 
 	chessBoardWidget = hbox->addWidget(cpp14::make_unique<ChessBoardWidget>());
 	panelWidget = hbox->addWidget(cpp14::make_unique<PanelWidget>(chessBoardWidget));
-	
+
+	auto textResource = std::make_shared<ChessResource>();
+	Wt::WLink link = Wt::WLink(textResource);
+	link.setTarget(Wt::LinkTarget::NewWindow);
+	Wt::WAnchor* anchor = hbox->addWidget(cpp14::make_unique<Wt::WAnchor>(link, "Save Game"));
+
 	//connections
 	chessBoardWidget->checkMateSignal.connect(this, &ChessGameWidget::gameOver);
 	chessBoardWidget->nextMoveSignal.connect(panelWidget, &PanelWidget::updateArrow);
+	chessBoardWidget->nextMoveSignal.connect( &ChessResource::setChanged);
 	chessBoardWidget->newLostSignal.connect(panelWidget, &PanelWidget::addLostFigure);
 }
 
@@ -50,5 +59,22 @@ void ChessGameWidget::gameOver(int player)
 	removeWidget(panelWidget);
 	removeWidget(this);
 }
+
+std::string ChessGameWidget::returnChessMoves()
+{
+	vector<string>  history = chessBoardWidget->history;
+	int counter = 0;
+	string text;
+	for (int i = 0; i < history.size(); i++) {
+		text.append(history[i] + " ");
+		counter++;
+		if (counter % 2 == 0) {
+			text.append("\n");
+			counter = 0;
+		}
+	}
+	return text;
+}
+
 
 

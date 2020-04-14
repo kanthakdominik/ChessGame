@@ -73,8 +73,7 @@ void Session::configureAuth()
     myAuthService.setAuthTokensEnabled(true, "chesscookie");
     myAuthService.setEmailVerificationEnabled(true);
 
-    std::unique_ptr<Auth::PasswordVerifier> verifier
-        = cpp14::make_unique<Auth::PasswordVerifier>();
+    std::unique_ptr<Auth::PasswordVerifier> verifier = cpp14::make_unique<Auth::PasswordVerifier>();
     verifier->addHashFunction(cpp14::make_unique<Auth::BCryptHashFunction>(7));
 
 #ifdef HAVE_CRYPT
@@ -159,7 +158,6 @@ void Session::addToScore(int s)
 
     dbo::ptr<User> u = user();
     if (u) {
-        u.modify()->score += s;
         ++u.modify()->gamesPlayed;
         u.modify()->lastGame = WDateTime::currentDateTime();
     }
@@ -195,10 +193,6 @@ int Session::findRanking()
 
     dbo::ptr<User> u = user();
     int ranking = -1;
-
-    if (u)
-        ranking = session_.query<int>("select distinct count(score) from user")
-        .where("score > ?").bind(u->score);
 
     transaction.commit();
 

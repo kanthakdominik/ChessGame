@@ -110,6 +110,19 @@ void ChessSquare::removePiece(){
 	setIcon("");
 }
 
+std::string ChessSquare::toChessNotation()
+{
+	std::string coordinates;
+	char x = column + 49;
+	char y = row + 65;
+
+	if (column >= 0 && column < 8 && row >= 0 && row < 8) {
+		coordinates += x;
+		coordinates += y;
+	}
+	return coordinates;
+}
+
 ChessSquare::~ChessSquare(){
 	//log("info") << "ChessSquare deleted.";
 }

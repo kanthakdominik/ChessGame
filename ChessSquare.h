@@ -28,6 +28,7 @@ public:
 	void removePiece();             
 	void setBackgroundColor(Color color);        
 	void clickEvent();
+	std::string toChessNotation();
 	~ChessSquare();  
 
 	//signal

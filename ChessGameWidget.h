@@ -7,6 +7,7 @@
 
 #include "PanelWidget.h"
 #include "ChessBoardWidget.h"
+#include "ChessResource.h"
 
 using namespace Wt;
 
@@ -19,12 +20,13 @@ class ChessGameWidget : public WContainerWidget
 public:
 	ChessGameWidget(const std::string& name);
     void newGame();
+	std::string returnChessMoves();
 
 	//slot
 	void gameOver(int player);
 
 private:
-
+	WLink link;
 	WString name_;
 	std::unique_ptr<WHBoxLayout> hbox;
 	WPushButton* newGameButton;

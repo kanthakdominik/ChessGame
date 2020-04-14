@@ -5,13 +5,17 @@
 #include <Wt/WSignal.h>
 #include "ChessSquare.h"
 #include "ChessPiece.h"
+#include "ChessResource.h"
 
 using namespace Wt;
 
 class ChessBoardWidget : public WContainerWidget
 {
 	friend class PanelWidget;
+	friend class ChessResources;
 public:
+	std::vector<std::string> history;
+
 	ChessBoardWidget();
 	void generateChessBoard();
 	void generateChessPieces();

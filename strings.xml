@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <messages>
   <message id="Wt.Auth.login-form-info">
-    Witaj na stronie ChessGame. Aby zagrać, zaloguj się lub załóż konto. <br/>
-    Jeśli chcesz, możesz także użyć konta gościa: 
+    Welcome to the ChessGame website. To play, log in or create an account. <br/>
+     If you want, you can also use a guest account:
     <b>guest/guest</b>.
   </message>
 

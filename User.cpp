@@ -8,4 +8,4 @@ DBO_INSTANTIATE_TEMPLATES(User);
 
 using namespace Wt::Dbo;
 
-User::User() : gamesPlayed(0),score(0) { }
+User::User() : gamesPlayed(0) { }

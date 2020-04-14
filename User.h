@@ -24,7 +24,6 @@ public:
 
     std::string name; 
     int gamesPlayed;
-    long long score;
     WDateTime lastGame;
     dbo::collection<dbo::ptr<AuthInfo>> authInfos;
 
@@ -32,7 +31,6 @@ public:
     void persist(Action& a)
     {
         dbo::field(a, gamesPlayed, "gamesPlayed");
-        dbo::field(a, score, "score");
         dbo::field(a, lastGame, "lastGame");
 
         dbo::hasMany(a, authInfos, dbo::ManyToOne, "user");

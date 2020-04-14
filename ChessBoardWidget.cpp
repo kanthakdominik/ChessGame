@@ -11,7 +11,7 @@ ChessBoardWidget::ChessBoardWidget() : WContainerWidget()
 	currentPlayer = 1;
 }
 
-void ChessBoardWidget::generateChessBoard() 
+void ChessBoardWidget::generateChessBoard()
 {
 	chessBoard = this->addWidget(std::make_unique<Wt::WContainerWidget>());
 	chessBoard->setStyleClass("centerWidget");
@@ -51,6 +51,8 @@ void ChessBoardWidget::move()
 	else currentPlayer = 0;
 
 	sourcePiece->nextMove();
+	history.push_back(chessSquares[sx][sy]->toChessNotation());
+	history.push_back(chessSquares[dx][dy]->toChessNotation());
 
 	nextMoveSignal.emit();
 	updateSquares();
@@ -75,7 +77,7 @@ bool ChessBoardWidget::checkActive(int x, int y)
 	}
 }
 
-void ChessBoardWidget::setCurrentPlayer(int player){
+void ChessBoardWidget::setCurrentPlayer(int player) {
 	currentPlayer = player;
 }
 
@@ -91,6 +93,7 @@ void ChessBoardWidget::resetChessboard()
 		}
 	}
 	lostPiecesList.clear();
+	history.clear();
 }
 
 void ChessBoardWidget::updateSquares()
@@ -117,7 +120,7 @@ void ChessBoardWidget::blockAllSquares()
 	}
 }
 
-void ChessBoardWidget::generateChessPieces() 
+void ChessBoardWidget::generateChessPieces()
 {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -175,7 +178,6 @@ void ChessBoardWidget::generateChessPieces()
 
 void ChessBoardWidget::validateClick(int x, int y)
 {
-	//log("info") << "Clicked square: <" << x << "," << y << ">";
 	ChessSquare* square = chessSquares[x][y];
 	if (square->isPiece() == true && square->getPiece()->getPlayer() == currentPlayer) {
 		updateSquares();
