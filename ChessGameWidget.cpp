@@ -6,6 +6,8 @@
 #include <Wt/WPushButton.h>
 #include <Wt/WHBoxLayout.h>
 #include <Wt/WMessageBox.h>
+#include <Wt/WProgressBar.h>
+#include <Wt/WFileUpload.h>
 #include <Wt/WLogger.h>
 
 #include "Session.h"
@@ -19,22 +21,35 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 	setContentAlignment(AlignmentFlag::Center);
 	hbox = std::make_unique<WHBoxLayout>();
 
+	auto vbox = std::make_unique<WContainerWidget>();
+	vbox->setStyleClass("vbox");
+
+
 	newGameButton = addWidget(cpp14::make_unique<WPushButton>(tr("chess.newGame")));
 	newGameButton->clicked().connect(this, &ChessGameWidget::newGame);
 
 	chessBoardWidget = hbox->addWidget(cpp14::make_unique<ChessBoardWidget>());
 	panelWidget = hbox->addWidget(cpp14::make_unique<PanelWidget>(chessBoardWidget));
 
-	auto textResource = std::make_shared<ChessResource>();
-	Wt::WLink link = Wt::WLink(textResource);
+	//game save
+	chessBoardWidget->nextMoveSignal.connect(this, &ChessGameWidget::setChessMoves);
+	textResource = std::make_shared<ChessResource>();
+	WLink link = WLink(textResource);
 	link.setTarget(Wt::LinkTarget::NewWindow);
-	Wt::WAnchor* anchor = hbox->addWidget(cpp14::make_unique<Wt::WAnchor>(link, "Save Game"));
+	WAnchor* anchor = vbox->addWidget(cpp14::make_unique<WAnchor>(link, "Save Game"));
+
+	//game load
+	Wt::WFileUpload* fu = vbox->addWidget(cpp14::make_unique<WFileUpload>());
+	fu->setFileTextSize(50);
+	fu->changed().connect([=] {fu->upload(); });
+	fu->uploaded().connect([=] { loadGame(fu->uploadedFiles()); });
 
 	//connections
 	chessBoardWidget->checkMateSignal.connect(this, &ChessGameWidget::gameOver);
 	chessBoardWidget->nextMoveSignal.connect(panelWidget, &PanelWidget::updateArrow);
-	chessBoardWidget->nextMoveSignal.connect( &ChessResource::setChanged);
 	chessBoardWidget->newLostSignal.connect(panelWidget, &PanelWidget::addLostFigure);
+
+	hbox->addWidget(std::move(vbox));
 }
 
 void ChessGameWidget::newGame()
@@ -57,10 +72,10 @@ void ChessGameWidget::gameOver(int player)
 	chessBoardWidget->blockAllSquares();
 	removeWidget(chessBoardWidget);
 	removeWidget(panelWidget);
-	removeWidget(this);
+	endGameSignal.emit();
 }
 
-std::string ChessGameWidget::returnChessMoves()
+void ChessGameWidget::setChessMoves()
 {
 	vector<string>  history = chessBoardWidget->history;
 	int counter = 0;
@@ -73,8 +88,31 @@ std::string ChessGameWidget::returnChessMoves()
 			counter = 0;
 		}
 	}
-	return text;
+	textResource->setText(text);
 }
+
+void ChessGameWidget::loadGame(const std::vector< Http::UploadedFile >& file) {
+
+	/*chessBoardWidget->resetChessboard();
+	chessBoardWidget->generateChessPieces();
+	panelWidget->cleartLostFigures();
+	panelWidget->updateArrow();
+	QTextStream in(&file);
+	try {
+		while (!in.atEnd()) {
+			QString line = in.readLine();
+			chessboard->readFromText(line);
+		}
+	}
+	catch (QString error) {
+		QMessageBox::critical(this, "B³¹d!", error);
+		chessboard->resetChessboard();
+		chessboard->generateChessPieces();
+		panel->clearLost();
+		panel->updateCurrentPlayer();
+	}*/
+}
+
 
 
 

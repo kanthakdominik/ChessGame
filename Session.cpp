@@ -152,7 +152,7 @@ std::string Session::userName() const
         return std::string();
 }
 
-void Session::addToScore(int s)
+void Session::addToScore()
 {
     dbo::Transaction transaction(session_);
 
@@ -169,7 +169,7 @@ std::vector<User> Session::topUsers(int limit)
 {
     dbo::Transaction transaction(session_);
 
-    Users top = session_.find<User>().orderBy("score desc").limit(limit);
+    Users top = session_.find<User>().orderBy("gamesPlayed desc").limit(limit);
 
     std::vector<User> result;
     for (Users::const_iterator i = top.begin(); i != top.end(); ++i) {

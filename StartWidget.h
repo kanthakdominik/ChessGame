@@ -19,6 +19,7 @@ class StartWidget : public WContainerWidget
 public:
 	StartWidget();
 	void handleInternalPath(const std::string& internalPath);
+	void addGameToScore();
 
 private:
 	WStackedWidget* mainStack_;

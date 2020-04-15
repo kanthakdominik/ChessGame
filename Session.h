@@ -32,7 +32,7 @@ public:
 
     std::string userName() const;
     int findRanking();
-    void addToScore(int s);
+    void addToScore();
 
     static const Auth::AuthService& auth();
     static const Auth::AbstractPasswordService& passwordAuth();

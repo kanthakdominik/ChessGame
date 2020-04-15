@@ -35,7 +35,7 @@ void HighScoresWidget::update()
 
     int rank = 0;
     for (auto& user : top) {
-
+        rank++;
         int row = table->rowCount();
         table->elementAt(row, 0)->addWidget(cpp14::make_unique<WText>(asString(rank)));
         table->elementAt(row, 1)->addWidget(cpp14::make_unique<WText>(user.name));

@@ -50,6 +50,10 @@ StartWidget::StartWidget() : WContainerWidget(), game_(0), scores_(0)
 	authWidgetPtr->processEnvironment();
 }
 
+void StartWidget::addGameToScore() {
+	session_.addToScore();
+}
+
 void StartWidget::onAuthEvent()
 {
 	if (session_.login().loggedIn()) {
@@ -97,7 +101,7 @@ void StartWidget::showGame()
 	if (!game_) {
 		game_ = mainStack_->addWidget(cpp14::make_unique<ChessGameWidget>(session_.userName()));
 	}
-
+	game_->endGameSignal.connect(this, &StartWidget::addGameToScore);
 	mainStack_->setCurrentWidget(game_);
 
 	backToGameAnchor_->addStyleClass("selected-link");

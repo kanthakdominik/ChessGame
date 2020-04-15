@@ -20,7 +20,11 @@ class ChessGameWidget : public WContainerWidget
 public:
 	ChessGameWidget(const std::string& name);
     void newGame();
-	std::string returnChessMoves();
+	void setChessMoves();
+	void loadGame(const std::vector< Http::UploadedFile >& file);
+
+	//signal
+	Signal<> endGameSignal;
 
 	//slot
 	void gameOver(int player);
@@ -32,6 +36,7 @@ private:
 	WPushButton* newGameButton;
 	PanelWidget* panelWidget;
     ChessBoardWidget* chessBoardWidget;
+	std::shared_ptr<ChessResource> textResource;
 };
 
 #endif //START_WIDGET_H_
