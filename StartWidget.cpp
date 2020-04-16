@@ -102,6 +102,18 @@ void StartWidget::showGame()
 		game_ = mainStack_->addWidget(cpp14::make_unique<ChessGameWidget>(session_.userName()));
 	}
 	game_->endGameSignal.connect(this, &StartWidget::addGameToScore);
+	game_->endGameSignal.connect(this, &StartWidget::createNewGame);
+	mainStack_->setCurrentWidget(game_);
+
+	backToGameAnchor_->addStyleClass("selected-link");
+	scoresAnchor_->removeStyleClass("selected-link");
+}
+
+void StartWidget::createNewGame() {
+	game_ = mainStack_->addWidget(cpp14::make_unique<ChessGameWidget>(session_.userName()));
+
+	game_->endGameSignal.connect(this, &StartWidget::addGameToScore);
+	game_->endGameSignal.connect(this, &StartWidget::createNewGame);
 	mainStack_->setCurrentWidget(game_);
 
 	backToGameAnchor_->addStyleClass("selected-link");

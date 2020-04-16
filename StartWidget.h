@@ -20,6 +20,7 @@ public:
 	StartWidget();
 	void handleInternalPath(const std::string& internalPath);
 	void addGameToScore();
+	void createNewGame();
 
 private:
 	WStackedWidget* mainStack_;

@@ -22,6 +22,7 @@ public:
 	void resetChessboard();             
 	void blockAllSquares();
 	void setDefaultColors();
+	void readFromText(std::string line);
 	~ChessBoardWidget();
 
 	//slots

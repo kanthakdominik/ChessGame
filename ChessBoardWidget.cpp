@@ -1,5 +1,6 @@
 #include "ChessBoardWidget.h"
 
+#include <regex> 
 #include "Wt/WBreak.h"
 #include "Wt/WLineEdit.h"
 #include "Wt/WText.h"
@@ -178,6 +179,7 @@ void ChessBoardWidget::generateChessPieces()
 
 void ChessBoardWidget::validateClick(int x, int y)
 {
+	log("POSITION") << x << "-" << y;
 	ChessSquare* square = chessSquares[x][y];
 	if (square->isPiece() == true && square->getPiece()->getPlayer() == currentPlayer) {
 		updateSquares();
@@ -308,7 +310,26 @@ void ChessBoardWidget::setDefaultColors()
 	}
 }
 
+void ChessBoardWidget::readFromText(std::string line)
+{
+	int new_sy = (int)line.at(0) - 49;
+	int new_sx = (int)line.at(1) - 65;
+
+	log("SX") << new_sx;
+	log("SY") << new_sy;
+
+	validateClick(new_sx, new_sy);
+
+	int new_dy = (int)line.at(3) - 49;
+	int new_dx = (int)line.at(4) - 65;
+
+	validateClick(new_dx, new_dy);
+
+	log("DX") << new_dx;
+	log("DY") << new_dy;
+}
+
 ChessBoardWidget::~ChessBoardWidget()
 {
-	resetChessboard();
+	
 }

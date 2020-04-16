@@ -21,9 +21,8 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 	setContentAlignment(AlignmentFlag::Center);
 	hbox = std::make_unique<WHBoxLayout>();
 
-	auto vbox = std::make_unique<WContainerWidget>();
+	vbox = std::make_unique<WContainerWidget>();
 	vbox->setStyleClass("vbox");
-
 
 	newGameButton = addWidget(cpp14::make_unique<WPushButton>(tr("chess.newGame")));
 	newGameButton->clicked().connect(this, &ChessGameWidget::newGame);
@@ -31,48 +30,73 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 	chessBoardWidget = hbox->addWidget(cpp14::make_unique<ChessBoardWidget>());
 	panelWidget = hbox->addWidget(cpp14::make_unique<PanelWidget>(chessBoardWidget));
 
+	//createNewGame button
+	createNewGameButton = vbox->addWidget(cpp14::make_unique<WPushButton>("New Game"));
+	createNewGameButton->clicked().connect(this, &ChessGameWidget::createNewGame);
+	createNewGameButton->setStyleClass("createNewGameButton");
+
 	//game save
-	chessBoardWidget->nextMoveSignal.connect(this, &ChessGameWidget::setChessMoves);
 	textResource = std::make_shared<ChessResource>();
 	WLink link = WLink(textResource);
 	link.setTarget(Wt::LinkTarget::NewWindow);
-	WAnchor* anchor = vbox->addWidget(cpp14::make_unique<WAnchor>(link, "Save Game"));
+	anchor = vbox->addWidget(cpp14::make_unique<WAnchor>(link, "Save Game"));
+	anchor->setStyleClass("saveAnchor");
 
-	//game load
-	Wt::WFileUpload* fu = vbox->addWidget(cpp14::make_unique<WFileUpload>());
-	fu->setFileTextSize(50);
-	fu->changed().connect([=] {fu->upload(); });
-	fu->uploaded().connect([=] { loadGame(fu->uploadedFiles()); });
+	//game open;
+	auto OpenGameText = vbox->addWidget(cpp14::make_unique<WText>("Open Game"));
+	OpenGameText->setStyleClass("openGameText");
+	openGameUpload = vbox->addWidget(cpp14::make_unique<WFileUpload>());
+	openGameUpload->setFileTextSize(50);
+	openGameUpload->changed().connect([=] {openGameUpload->upload(); });
+	openGameUpload->uploaded().connect([=] {
+		auto file = openGameUpload->uploadedFiles().at(0);
+		string fileLocation = file.spoolFileName();
+		openGame(fileLocation);
+		log("OPEN") << fileLocation; });
+	openGameUpload->setStyleClass("openGameUpload");
+	
+	
 
 	//connections
 	chessBoardWidget->checkMateSignal.connect(this, &ChessGameWidget::gameOver);
 	chessBoardWidget->nextMoveSignal.connect(panelWidget, &PanelWidget::updateArrow);
 	chessBoardWidget->newLostSignal.connect(panelWidget, &PanelWidget::addLostFigure);
+	chessBoardWidget->nextMoveSignal.connect(this, &ChessGameWidget::setChessMoves);
 
 	hbox->addWidget(std::move(vbox));
 }
 
 void ChessGameWidget::newGame()
 {
-	removeWidget(newGameButton);
 	setLayout(std::move(hbox));
-
+	
 	chessBoardWidget->generateChessBoard();
 	chessBoardWidget->generateChessPieces();
+	chessBoardWidget->setDefaultColors();
+	panelWidget->cleartLostFigures();
+	panelWidget->updateArrow();
+}
+
+void ChessGameWidget::createNewGame() {
+	endGameSignal.emit();
 }
 
 void ChessGameWidget::gameOver(int player)
 {
+	chessBoardWidget->blockAllSquares();
+	endGameSignal.emit();
+
 	if (player == 1) {
 		StandardButton result = WMessageBox::show("End of the game", "Black Player wins", StandardButton::Ok);
 	}
 	else {
 		StandardButton result = WMessageBox::show("End of the game", "White Player wins", StandardButton::Ok);
 	}
-	chessBoardWidget->blockAllSquares();
-	removeWidget(chessBoardWidget);
-	removeWidget(panelWidget);
-	endGameSignal.emit();
+
+	chessBoardWidget->hide();
+	panelWidget->hide();
+	anchor->hide();
+	openGameUpload->hide();
 }
 
 void ChessGameWidget::setChessMoves()
@@ -91,26 +115,32 @@ void ChessGameWidget::setChessMoves()
 	textResource->setText(text);
 }
 
-void ChessGameWidget::loadGame(const std::vector< Http::UploadedFile >& file) {
+void ChessGameWidget::openGame(std::string fileLocation) {
 
-	/*chessBoardWidget->resetChessboard();
+	string line;
+	ifstream myfile(fileLocation);
+
+	chessBoardWidget->resetChessboard();
 	chessBoardWidget->generateChessPieces();
+	chessBoardWidget->setDefaultColors();
 	panelWidget->cleartLostFigures();
 	panelWidget->updateArrow();
-	QTextStream in(&file);
+
 	try {
-		while (!in.atEnd()) {
-			QString line = in.readLine();
-			chessboard->readFromText(line);
+		if (myfile.is_open()) {
+			while (getline(myfile, line)) {
+				chessBoardWidget->readFromText(line);
+			}
+			myfile.close();
 		}
+		else log("FILE") << "Unable to open file";
 	}
-	catch (QString error) {
-		QMessageBox::critical(this, "B³¹d!", error);
-		chessboard->resetChessboard();
-		chessboard->generateChessPieces();
-		panel->clearLost();
-		panel->updateCurrentPlayer();
-	}*/
+	catch (exception e) {
+		chessBoardWidget->resetChessboard();
+		chessBoardWidget->generateChessPieces();
+		panelWidget->cleartLostFigures();
+		panelWidget->updateArrow();
+	}
 }
 
 

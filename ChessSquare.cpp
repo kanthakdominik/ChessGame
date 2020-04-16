@@ -49,12 +49,12 @@ void ChessSquare::setActive(bool active){
 }
 
 bool ChessSquare::isPiece(){
-	if (chessPiece != nullptr) {
-		return true;
-	}
-	else {
-		return false;
-	}
+		if (chessPiece != nullptr) {
+			return true;
+		}
+		else {
+			return false;
+		}
 }
 
 void ChessSquare::setBackgroundColor(Color color){
@@ -107,7 +107,7 @@ void ChessSquare::setPiece(ChessPiece* chessPiece){
 
 void ChessSquare::removePiece(){
 	chessPiece = nullptr;
-	setIcon("");
+	setIcon("resources/Images/pieces/blank.png");
 }
 
 std::string ChessSquare::toChessNotation()

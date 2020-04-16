@@ -19,9 +19,10 @@ class ChessGameWidget : public WContainerWidget
 {
 public:
 	ChessGameWidget(const std::string& name);
-    void newGame();
+	void newGame();
 	void setChessMoves();
-	void loadGame(const std::vector< Http::UploadedFile >& file);
+	void openGame(std::string fileLocation);
+	void createNewGame();
 
 	//signal
 	Signal<> endGameSignal;
@@ -32,10 +33,14 @@ public:
 private:
 	WLink link;
 	WString name_;
+	WAnchor* anchor;
+	WFileUpload* openGameUpload;
 	std::unique_ptr<WHBoxLayout> hbox;
+	std::unique_ptr<WContainerWidget> vbox;
 	WPushButton* newGameButton;
+	WPushButton* createNewGameButton;
 	PanelWidget* panelWidget;
-    ChessBoardWidget* chessBoardWidget;
+	ChessBoardWidget* chessBoardWidget;
 	std::shared_ptr<ChessResource> textResource;
 };
 

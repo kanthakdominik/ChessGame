@@ -60,15 +60,6 @@ body {
     font-size: large;
 }
 
-.wordcontainer {
-    top-margin: 20px;
-    bottom-margin: 20px;
-
-    border-style: solid;
-    font-family: courier, Monospace;
-    font-size: xx-large;
-}
-
 .selected-link {
     font-weight: bold;
 }
@@ -86,11 +77,20 @@ body {
 }
 
 .panel-box {
-	width: 30%;  
+	width: 34%;
+	display: grid;
+    grid-template-columns: auto auto;
 }
 
 .chess-box {
-	width: 70%;
+	width:53%;
+}
+
+.vbox {
+	width: 13%;
+	display: flex;
+	flex-direction: column;
+	align-content: space-around;
 }
 
 .chessButtonGray {
@@ -125,6 +125,49 @@ body {
 	margin-left: auto;
     margin-right: auto;
 }
+
+.playerImage {
+	height: 208px;
+	width: 226px;
+}
+
+.playerLabel {
+	font-weight: bold;
+	font-size: 24px;
+}
+
+.lostFigureImage {
+	height: 48px;
+	width: 48px;
+}
+.lostFigureContainer{
+	display: grid;
+    grid-template-columns: auto auto auto auto;
+}
+
+.createNewGameButton{
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+
+.saveAnchor{
+	margin-bottom: 30px;
+	margin-top: 20px;
+}
+
+.openGameUpload{
+	margin-bottom: 30px;
+	margin-top: 0px;
+}
+
+.openGameText{
+	margin-bottom: 0px;
+	margin-top: 20px;
+}
+
+
+
+
 
 
 

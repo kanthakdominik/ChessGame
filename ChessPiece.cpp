@@ -32,8 +32,9 @@ WLink ChessPiece::getIconLink(){
 	case Figure::PAWN:
 		iconLink.setUrl(("resources/Images/pieces/pawn_" + player_name + ".png").toUTF8());
 		break;
-	default:
-		iconLink.setUrl("");
+	default: 
+		iconLink.setUrl("resources/Images/pieces/blank.png");
+		break;
 	}
 	return iconLink;
 }
