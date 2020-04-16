@@ -24,7 +24,7 @@ void HighScoresWidget::update()
     int ranking = session_->findRanking();
 
     std::vector<User> top = session_->topUsers(20);
-
+    
     WTable* table = this->addWidget(cpp14::make_unique<WTable>());
 
     table->elementAt(0, 0)->addWidget(cpp14::make_unique<WText>("Rank"));

@@ -27,10 +27,9 @@ public:
 
     Auth::AbstractUserDatabase& users();
     Auth::Login& login() { return login_; }
-
     std::vector<User> topUsers(int limit);
-
     std::string userName() const;
+
     int findRanking();
     void addToScore();
 
@@ -42,7 +41,6 @@ private:
     mutable Dbo::Session session_;
     std::unique_ptr<UserDatabase> users_;
     Auth::Login login_;
-
     Dbo::ptr<User> user() const;
 };
 

@@ -8,7 +8,6 @@
 
 using namespace Wt;
 
-
 class ChessResource : public WResource
 {
 public:

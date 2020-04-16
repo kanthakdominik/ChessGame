@@ -1,6 +1,6 @@
 #include "ChessSquare.h"
 
-ChessSquare::ChessSquare(int row, int column) : WPushButton(){
+ChessSquare::ChessSquare(int row, int column) : WPushButton() {
 	this->row = row;
 	this->column = column;
 	chessPiece = nullptr;
@@ -36,28 +36,28 @@ void ChessSquare::clickEvent() {
 	}
 }
 
-void ChessSquare::setActive(Color color){
+void ChessSquare::setActive(Color color) {
 	this->active = true;
 	WPushButton::setEnabled(true);
 	setBackgroundColor(color);
 }
 
-void ChessSquare::setActive(bool active){
+void ChessSquare::setActive(bool active) {
 	this->active = active;
 	WPushButton::setEnabled(active);
 	this->setBackgroundColor(backgroundColor);
 }
 
-bool ChessSquare::isPiece(){
-		if (chessPiece != nullptr) {
-			return true;
-		}
-		else {
-			return false;
-		}
+bool ChessSquare::isPiece() {
+	if (chessPiece != nullptr) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
-void ChessSquare::setBackgroundColor(Color color){
+void ChessSquare::setBackgroundColor(Color color) {
 	this->backgroundColor = color;
 
 	switch (color) {
@@ -77,7 +77,7 @@ void ChessSquare::setBackgroundColor(Color color){
 	}
 }
 
-void ChessSquare::setColor(int color){
+void ChessSquare::setColor(int color) {
 	switch (color) {
 	case 0:
 		setStyleClass("chessButtonWhite");
@@ -92,20 +92,20 @@ void ChessSquare::setColor(int color){
 	this->color = color;
 }
 
-bool ChessSquare::isActive(){
+bool ChessSquare::isActive() {
 	return active;
 }
 
-ChessPiece* ChessSquare::getPiece(){
+ChessPiece* ChessSquare::getPiece() {
 	return chessPiece;
 }
 
-void ChessSquare::setPiece(ChessPiece* chessPiece){
+void ChessSquare::setPiece(ChessPiece* chessPiece) {
 	this->chessPiece = chessPiece;
 	setIcon(chessPiece->getIconLink());
 }
 
-void ChessSquare::removePiece(){
+void ChessSquare::removePiece() {
 	chessPiece = nullptr;
 	setIcon("resources/Images/pieces/blank.png");
 }
@@ -123,7 +123,7 @@ std::string ChessSquare::toChessNotation()
 	return coordinates;
 }
 
-ChessSquare::~ChessSquare(){
+ChessSquare::~ChessSquare() {
 	//log("info") << "ChessSquare deleted.";
 }
 

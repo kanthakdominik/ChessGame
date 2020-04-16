@@ -36,7 +36,6 @@ private:
 	WImage* player2LostFigures[16];
 	std::unique_ptr<WContainerWidget> player1LostFiguresImage;
 	std::unique_ptr<WContainerWidget> player2LostFiguresImage;
-
 };
 
 #endif //PANEL_WIDGET_H_

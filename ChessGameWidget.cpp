@@ -20,13 +20,10 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 	setStyleClass("main-box");
 	setContentAlignment(AlignmentFlag::Center);
 	hbox = std::make_unique<WHBoxLayout>();
-
 	vbox = std::make_unique<WContainerWidget>();
 	vbox->setStyleClass("vbox");
 
-	newGameButton = addWidget(cpp14::make_unique<WPushButton>(tr("chess.newGame")));
-	newGameButton->clicked().connect(this, &ChessGameWidget::newGame);
-
+	newGameButton = addWidget(cpp14::make_unique<WPushButton>("Start New Game"));
 	chessBoardWidget = hbox->addWidget(cpp14::make_unique<ChessBoardWidget>());
 	panelWidget = hbox->addWidget(cpp14::make_unique<PanelWidget>(chessBoardWidget));
 
@@ -55,13 +52,12 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 		log("OPEN") << fileLocation; });
 	openGameUpload->setStyleClass("openGameUpload");
 	
-	
-
 	//connections
 	chessBoardWidget->checkMateSignal.connect(this, &ChessGameWidget::gameOver);
 	chessBoardWidget->nextMoveSignal.connect(panelWidget, &PanelWidget::updateArrow);
 	chessBoardWidget->newLostSignal.connect(panelWidget, &PanelWidget::addLostFigure);
 	chessBoardWidget->nextMoveSignal.connect(this, &ChessGameWidget::setChessMoves);
+	newGameButton->clicked().connect(this, &ChessGameWidget::newGame);
 
 	hbox->addWidget(std::move(vbox));
 }
@@ -69,7 +65,6 @@ ChessGameWidget::ChessGameWidget(const std::string& name) : WContainerWidget(), 
 void ChessGameWidget::newGame()
 {
 	setLayout(std::move(hbox));
-	
 	chessBoardWidget->generateChessBoard();
 	chessBoardWidget->generateChessPieces();
 	chessBoardWidget->setDefaultColors();
@@ -92,7 +87,6 @@ void ChessGameWidget::gameOver(int player)
 	else {
 		StandardButton result = WMessageBox::show("End of the game", "White Player wins", StandardButton::Ok);
 	}
-
 	chessBoardWidget->hide();
 	panelWidget->hide();
 	anchor->hide();
