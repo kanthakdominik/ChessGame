@@ -6,6 +6,7 @@
 #include "ChessSquare.h"
 #include "ChessPiece.h"
 #include "ChessResource.h"
+#include "Bishop.h"
 
 using namespace Wt;
 

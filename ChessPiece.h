@@ -21,8 +21,8 @@ enum class Figure
 class ChessPiece
 {
 public:
-    ChessPiece(int playerNumber, Figure figure);
-    Figure getFigure();
+    ChessPiece(int playerNumber);
+    ChessPiece* getFigure();
     WLink getIconLink();
     int getPlayer();        
     int getMoveNumber();    
@@ -30,7 +30,6 @@ public:
     ~ChessPiece();
 
 private:
-    Figure figure;
     WLink iconLink;
     int moveNumber;
     int playerNumber;
