@@ -10,21 +10,21 @@ ChessSquare::ChessSquare(int row, int column) : WPushButton() {
 
 	if (column % 2 == 0) {
 		if (row % 2 == 0) {
-			setColor(1);
+			setBaseColor(1);
 			backgroundColor = Color::GRAY;
 		}
 		else {
-			setColor(0);
+			setBaseColor(0);
 			backgroundColor = Color::WHITE;
 		}
 	}
 	else {
 		if (row % 2 == 0) {
-			setColor(0);
+			setBaseColor(0);
 			backgroundColor = Color::WHITE;
 		}
 		else {
-			setColor(1);
+			setBaseColor(1);
 			backgroundColor = Color::GRAY;
 		}
 	}
@@ -77,7 +77,7 @@ void ChessSquare::setBackgroundColor(Color color) {
 	}
 }
 
-void ChessSquare::setColor(int color) {
+void ChessSquare::setBaseColor(int color) {
 	switch (color) {
 	case 0:
 		setStyleClass("chessButtonWhite");
@@ -123,8 +123,54 @@ std::string ChessSquare::toChessNotation()
 	return coordinates;
 }
 
-ChessSquare::~ChessSquare() {
-	//log("info") << "ChessSquare deleted.";
+bool ChessSquare::setMove(int x, int y, int currentPlayer, ChessSquare* chessSquares[8][8])
+{
+	if (x >= 0 && x < 8 && y >= 0 && y < 8) {
+		if (chessSquares[x][y]->ChessSquare::isPiece() == true) {
+			if (chessSquares[x][y]->getPiece()->getPlayer() != currentPlayer) {
+				chessSquares[x][y]->setActive(Color::RED);
+			}
+			return false;
+		}
+		else {
+			chessSquares[x][y]->setActive(Color::GREEN);
+			return true;
+		}
+	}
+	else {
+		return false;
+	}
+}
+void ChessSquare::setMovePawn(int x, int y, int currentPlayer, ChessSquare* chessSquares[8][8])
+{
+	if (currentPlayer == 0) {
+		if (x + 1 < 8) {
+			if (chessSquares[x + 1][y]->isPiece() == false) chessSquares[x + 1][y]->setActive(Color::GREEN);
+			if (y + 1 < 8 && chessSquares[x + 1][y + 1]->isPiece() == true && chessSquares[x + 1][y + 1]->getPiece()->getPlayer() != currentPlayer) {
+				chessSquares[x + 1][y + 1]->setActive(Color::RED);
+			}
+			if (y - 1 >= 0 && chessSquares[x + 1][y - 1]->isPiece() == true && chessSquares[x + 1][y - 1]->getPiece()->getPlayer() != currentPlayer) {
+				chessSquares[x + 1][y - 1]->setActive(Color::RED);
+			}
+		}
+		if (chessSquares[x][y]->getPiece()->getMoveNumber() == 0) {
+			if (chessSquares[x + 2][y]->isPiece() == false) chessSquares[x + 2][y]->setActive(Color::GREEN);
+		}
+	}
+	else {
+		if (x - 1 >= 0) {
+			if (chessSquares[x - 1][y]->isPiece() == false) chessSquares[x - 1][y]->setActive(Color::GREEN);
+			if (y + 1 < 8 && chessSquares[x - 1][y + 1]->isPiece() == true && chessSquares[x - 1][y + 1]->getPiece()->getPlayer() != currentPlayer) {
+				chessSquares[x - 1][y + 1]->setActive(Color::RED);
+			}
+			if (y - 1 >= 0 && chessSquares[x - 1][y - 1]->isPiece() == true && chessSquares[x - 1][y - 1]->getPiece()->getPlayer() != currentPlayer) {
+				chessSquares[x - 1][y - 1]->setActive(Color::RED);
+			}
+		}
+		if (chessSquares[x][y]->getPiece()->getMoveNumber() == 0) {
+			if (chessSquares[x - 2][y]->isPiece() == false) chessSquares[x - 2][y]->setActive(Color::GREEN);
+		}
+	}
 }
 
 

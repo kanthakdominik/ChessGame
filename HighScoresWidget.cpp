@@ -18,15 +18,10 @@ HighScoresWidget::HighScoresWidget(Session* session) : WContainerWidget(),sessio
 void HighScoresWidget::update()
 {
     clear();
-
     this->addWidget(cpp14::make_unique<WText>("<h2>Hall of fame</h2>"));
-
-    int ranking = session_->findRanking();
-
     std::vector<User> top = session_->topUsers(20);
-    
-    WTable* table = this->addWidget(cpp14::make_unique<WTable>());
 
+    WTable* table = this->addWidget(cpp14::make_unique<WTable>());
     table->elementAt(0, 0)->addWidget(cpp14::make_unique<WText>("Rank"));
     table->elementAt(0, 1)->addWidget(cpp14::make_unique<WText>("User"));
     table->elementAt(0, 2)->addWidget(cpp14::make_unique<WText>("Games"));

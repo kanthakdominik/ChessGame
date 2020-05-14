@@ -7,6 +7,7 @@
 
 using namespace Wt;
 
+
 std::unique_ptr<WApplication> createApplication(const WEnvironment& env)
 {
     auto app = cpp14::make_unique<WApplication>(env);
@@ -23,7 +24,9 @@ std::unique_ptr<WApplication> createApplication(const WEnvironment& env)
     return app;
 }
 
-
+/**
+ * funkcja main odpowiedzialna za start serwera oraz aplikacji webowej
+ */
 int main(int argc, char** argv)
 {
     try {

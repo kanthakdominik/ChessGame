@@ -187,18 +187,6 @@ std::vector<User> Session::topUsers(int limit)
     return result;
 }
 
-int Session::findRanking()
-{
-    dbo::Transaction transaction(session_);
-
-    dbo::ptr<User> u = user();
-    int ranking = -1;
-
-    transaction.commit();
-
-    return ranking + 1;
-}
-
 Auth::AbstractUserDatabase& Session::users()
 {
     return *users_;
